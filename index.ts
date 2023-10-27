@@ -207,16 +207,12 @@ const transform = (node: TreeNode) => {
   return transformTree
 }
 
-console.log(buildTree(tokenizer("a-length - 2.23")))
-console.log(buildTree(tokenizer("(length - 2.2) * 3 - 10 * 3")))
-console.log(buildTree(tokenizer("30 - 10 / (b-length * 0.8 + 5)")))
-console.log(JSON.stringify(buildTree(tokenizer("10 * (c_width - 5) / (b-length * 0.8 + 5)")), null, 2))
-console.log(
-  JSON.stringify(
-    transform(
-      buildTree(tokenizer("10 * (c_width - 5) / (b-length * 0.8 + 5)")),
-    ),
-    null,
-    2
+const parse = (input: string) => {
+  return transform(
+    buildTree(
+      tokenizer(input)
+    )
   )
-)
+}
+
+export default parse;
