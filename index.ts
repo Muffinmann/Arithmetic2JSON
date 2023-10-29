@@ -23,7 +23,7 @@ const OPERATOR = /^[+\-*/]/
 const VARIABLE = /^[a-zA-Z_-]/
 const PARENTHESES = /^[()]/
 
-const tokenizer = (input: string): Token[] => {
+export const tokenizer = (input: string): Token[] => {
   let charIndex = 0;
   const tokens = [];
   const forward = () => {
@@ -86,8 +86,8 @@ const tokenizer = (input: string): Token[] => {
   return tokens;
 }
 
-
-const buildTree = (tokens: Token[]): any => {
+// TODO shunting-yard algorithm
+export const buildTree = (tokens: Token[]): any => {
   let nodeStack = []
   // const tree
   let index = 0;
@@ -195,7 +195,7 @@ const buildTree = (tokens: Token[]): any => {
 }
 
 
-const transform = (node: TreeNode) => {
+export const transform = (node: TreeNode) => {
   const transformTree: any = {}
   if (node.type === "BinaryExpression") {
     transformTree[node.value] = [transform(node.left), transform(node.right)]

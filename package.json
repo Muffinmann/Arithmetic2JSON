@@ -23,6 +23,7 @@
   },
   "homepage": "https://github.com/Muffinmann/Arithmetic2JSON#readme",
   "devDependencies": {
+    "ts-node": "^10.9.1",
     "typescript": "^5.2.2"
   }
 }
