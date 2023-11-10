@@ -5,17 +5,32 @@ enum TokenType {
   PARENTHESES,
 }
 
+enum TreeNodeType {
+  BINARY_EXPRESSION,
+  VARIABLE,
+  NUMBER,
+  NULL,
+}
+
 type Token = {
   type: TokenType,
   content: string,
 }
 
 type TreeNode = {
-  type: string,
   value: string,
-  left: TreeNode,
-  right: TreeNode,
-}
+} & (
+    {
+      type: TreeNodeType.BINARY_EXPRESSION,
+      left: TreeNode,
+      right: TreeNode
+    }
+    | {
+      type: TreeNodeType.NUMBER | TreeNodeType.VARIABLE | TreeNodeType.NULL
+    }
+  )
+
+
 
 const WHITE_SPACE = /^\s/
 const INTEGER = /^[0-9]/
@@ -87,9 +102,8 @@ export const tokenizer = (input: string): Token[] => {
 }
 
 // TODO shunting-yard algorithm
-export const buildTree = (tokens: Token[]): any => {
-  let nodeStack = []
-  // const tree
+export const buildTree = (tokens: Token[]): TreeNode => {
+  let nodeStack: TreeNode[] = []
   let index = 0;
 
   const forward = () => {
@@ -120,7 +134,7 @@ export const buildTree = (tokens: Token[]): any => {
     }
 
     if (token.type === TokenType.OPERATOR) {
-      const left: any = nodeStack.pop()
+      const left = nodeStack.pop()
       if (!left) {
         throw (new Error("Stack empty."))
       }
@@ -137,7 +151,7 @@ export const buildTree = (tokens: Token[]): any => {
           }
 
           nodeStack.push({
-            type: "BinaryExpression",
+            type: TreeNodeType.BINARY_EXPRESSION,
             value,
             left,
             right: buildTree(stack),
@@ -146,7 +160,7 @@ export const buildTree = (tokens: Token[]): any => {
           forward()
         } else {
           nodeStack.push({
-            type: "BinaryExpression",
+            type: TreeNodeType.BINARY_EXPRESSION,
             value,
             left,
             right: buildTree([right]),
@@ -164,7 +178,7 @@ export const buildTree = (tokens: Token[]): any => {
 
         const right = buildTree(stack)
         nodeStack.push({
-          type: "BinaryExpression",
+          type: TreeNodeType.BINARY_EXPRESSION,
           value,
           left,
           right,
@@ -175,7 +189,7 @@ export const buildTree = (tokens: Token[]): any => {
 
     if (token.type === TokenType.NUMBER) {
       nodeStack.push({
-        type: "Number",
+        type: TreeNodeType.NUMBER,
         value: token.content
       })
       forward()
@@ -184,24 +198,29 @@ export const buildTree = (tokens: Token[]): any => {
 
     if (token.type === TokenType.VARIABLE) {
       nodeStack.push({
-        type: "Variable",
+        type: TreeNodeType.VARIABLE,
         value: token.content
       })
       forward()
       continue;
     }
   }
-  return nodeStack.pop()
+
+  return nodeStack.pop() || { type: TreeNodeType.NULL, value: "No Token Found." }
 }
 
 
 export const transform = (node: TreeNode) => {
   const transformTree: any = {}
-  if (node.type === "BinaryExpression") {
+  if (node.type === TreeNodeType.NULL) {
+    console.log(node.value)
+    return transformTree
+  }
+  if (node.type === TreeNodeType.BINARY_EXPRESSION) {
     transformTree[node.value] = [transform(node.left), transform(node.right)]
-  } else if (node.type === "Variable") {
+  } else if (node.type === TreeNodeType.VARIABLE) {
     return { var: node.value }
-  } else if (node.type === "Number") {
+  } else if (node.type === TreeNodeType.NUMBER) {
     return Number(node.value)
   }
   return transformTree
