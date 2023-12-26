@@ -1,5 +1,5 @@
 import assert from 'node:assert';
-import { tokenizer, buildTree, transform } from './index.js';
+import { tokenizer, buildTree, transform, transformObject } from './index.js';
 
 
 const input = "(length - 2.2) * 3 - 10 * 3"
@@ -19,37 +19,37 @@ const tokens = [
 ]
 
 const tree = {
-  "type": "BinaryExpression",
+  "type": 0,
   "value": "-",
   "left": {
-    "type": "BinaryExpression",
+    "type": 0,
     "value": "*",
     "left": {
-      "type": "BinaryExpression",
+      "type": 0,
       "value": "-",
       "left": {
-        "type": "Variable",
+        "type": 1,
         "value": "length"
       },
       "right": {
-        "type": "Number",
+        "type": 2,
         "value": "2.2"
       }
     },
     "right": {
-      "type": "Number",
+      "type": 2,
       "value": "3"
     }
   },
   "right": {
-    "type": "BinaryExpression",
+    "type": 0,
     "value": "*",
     "left": {
-      "type": "Number",
+      "type": 2,
       "value": "10"
     },
     "right": {
-      "type": "Number",
+      "type": 2,
       "value": "3"
     }
   }
@@ -83,3 +83,4 @@ const json = {
 assert.deepEqual(tokenizer(input), tokens, "Tokenizer should turn string into tokens.")
 assert.deepEqual(buildTree((tokens)), tree, "buildTree should turn tokens into a tree.")
 assert.deepEqual(transform(tree as any), json, "transform should turn tree into a JSON object.")
+assert.deepEqual(transformObject(json), input, "should turn object back to string")

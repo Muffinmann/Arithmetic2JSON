@@ -226,6 +226,45 @@ export const transform = (node: TreeNode) => {
   return transformTree
 }
 
+const isObject = (val: unknown): val is object => Object.prototype.toString.call(val) === '[object Object]'
+
+export const transformObject = (obj: object): string => {
+
+  const transformNode = (node: unknown): any => {
+    if (Array.isArray(node)) {
+      return node.map(transformNode)
+    }
+    if (isObject(node)) {
+      const operator = Object.keys(node)[0]
+      const operands = node[operator as keyof typeof node]
+      if (operator === 'var') {
+        return Array.isArray(operands) ? operands[0] : operands
+      }
+      return {
+        operator,
+        left: transformNode(operands[0]),
+        right: transformNode(operands[1]),
+      }
+    }
+
+    return node
+  }
+  const stringify = (node: any, parent: any = null): string => {
+    if (isObject(node) && 'operator' in node && 'left' in node && 'right' in node) {
+      if (parent && (parent.operator === '*' || parent.operator === '/') && (
+        node.operator === '+' || node.operator === '-'
+      )) {
+        return `(${stringify(node.left, node)} ${node.operator} ${stringify(node.right, node)})`
+      }
+      return `${stringify(node.left, node)} ${node.operator} ${stringify(node.right, node)}`
+    }
+    return String(node)
+  }
+
+  return stringify(transformNode(obj))
+}
+
+
 const parse = (input: string) => {
   return transform(
     buildTree(
