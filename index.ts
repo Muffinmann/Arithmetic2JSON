@@ -265,7 +265,10 @@ export const transformObject = (obj: object): string => {
 }
 
 
-const parse = (input: string) => {
+const parse = (input: string | object) => {
+  if (isObject(input)) {
+    return transformObject(input)
+  }
   return transform(
     buildTree(
       tokenizer(input)
