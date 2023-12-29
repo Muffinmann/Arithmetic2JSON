@@ -2,10 +2,12 @@
   "name": "arithmetic2json",
   "version": "1.0.0",
   "description": "\\",
-  "main": "index.js",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "type": "module",
   "scripts": {
-    "test": "npx tsc && node ./build/test.js"
+    "build": "tsc",
+    "test": "tsc && node dist/test.js"
   },
   "repository": {
     "type": "git",
@@ -23,7 +25,9 @@
   },
   "homepage": "https://github.com/Muffinmann/Arithmetic2JSON#readme",
   "devDependencies": {
-    "ts-node": "^10.9.2",
     "typescript": "^5.2.2"
+  },
+  "dependencies": {
+    "@types/node": "^20.10.5"
   }
 }
