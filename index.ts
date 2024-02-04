@@ -35,7 +35,7 @@ type TreeNode = {
 const WHITE_SPACE = /^\s/
 const INTEGER = /^[0-9]/
 const OPERATOR = /^[+\-*/]/
-const VARIABLE = /^[a-zA-Z_-]/
+const VARIABLE = /^[0-9a-zA-Z_-]/
 const PARENTHESES = /^[()]/
 
 export const tokenizer = (input: string): Token[] => {

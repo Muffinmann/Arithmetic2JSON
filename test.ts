@@ -86,3 +86,20 @@ assert.deepEqual(transform(tree as any), json, "transform should turn tree into 
 assert.deepEqual(transformObject(json), input, "should turn object back to string")
 assert.deepEqual(parse(json), input, "should parse object")
 assert.deepEqual(parse(input), json, "should parse string")
+
+
+
+const input2 = "(a1-length - 10) * 2"
+
+const tokens2 = [
+  { type: 3, content: '(' },
+  { type: 2, content: 'a1-length' },
+  { type: 0, content: '-' },
+  { type: 1, content: '10' },
+  { type: 3, content: ')' },
+  { type: 0, content: '*' },
+  { type: 1, content: '2' },
+]
+
+
+assert.deepEqual(tokenizer(input2), tokens2, "Tokenizer should turn key string into token correctly.")
